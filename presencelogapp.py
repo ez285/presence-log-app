@@ -38,7 +38,8 @@ if cont == 'Add New...':
 elif cont is not None:
     selPres = sl.multiselect('Presence', pl.GetPersonellForCompany(str(cont)) + ['Add New...'])
 
-submitted = sl.form_submit_button("Save")
+submitted = sl.button("Save")
 
 if submitted:
     sl.success('Saved')
+
