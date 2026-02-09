@@ -31,15 +31,14 @@ class PresenceLog:
 
 pl = PresenceLog()
 
-with sl.form('presence log'):
-    selDat = sl.date_input('Date', value=date.today(), format='DD/MM/YYYY')
-    cont = sl.selectbox('Company', pl.Companies + ['Add New...'])
-    if cont == 'Add New...':
-        pass
-    elif cont is not None:
-        selPres = sl.multiselect('Presence', pl.GetPersonellForCompany(str(cont)) + ['Add New...'])
+selDat = sl.date_input('Date', value=date.today(), format='DD/MM/YYYY')
+cont = sl.selectbox('Company', pl.Companies + ['Add New...'])
+if cont == 'Add New...':
+    pass
+elif cont is not None:
+    selPres = sl.multiselect('Presence', pl.GetPersonellForCompany(str(cont)) + ['Add New...'])
 
-    submitted = sl.form_submit_button("Save")
+submitted = sl.form_submit_button("Save")
 
 if submitted:
     sl.success('Saved')
