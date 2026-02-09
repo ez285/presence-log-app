@@ -4,20 +4,22 @@ from google.oauth2.service_account import Credentials
 import streamlit as sl
 from datetime import date
 
+SCOPES = [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive'
+]
+
+@sl.cache_resource
+def get_worksheet():
+    creds = Credentials.from_service_account_info(sl.secrets['gcp_service_account'], scopes=SCOPES)
+    gc = gs.authorize(creds)
+    sh = gc.open_by_key(sl.secrets['sheet_id'])
+    return sh.worksheet(sl.secrets['worksheet_name'])
+
 class PresenceLog:
     def __init__(self) -> None:
-        SCOPES = [
-            'https://www.googleapis.com/auth/spreadsheets',
-            'https://www.googleapis.com/auth/drive'
-        ]
-        SERVICE_ACCOUNT_FILE = 'singular-ally-472620-m4-7ca5b5f2a5ae.json'
-        SPREADSHEET_ID = '1yLfco4jfgtXT_HTm_gylPWxtWbxLkdcEAdVlmK_aOPE'
-        WORKSHEET_NAME = 'Presence log'
-        creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-        gc = gs.authorize(creds)
-        sh = gc.open_by_key(SPREADSHEET_ID)
-        self.Sheet = sh.worksheet(WORKSHEET_NAME)
-    
+        self.Sheet = get_worksheet()
+        
     def AddRows(self, rows:list[list]) -> None:
         self.Sheet.append_rows(rows, insert_data_option=gs.utils.InsertDataOption.insert_rows, table_range='A1')
 
@@ -29,4 +31,5 @@ with sl.form('presence log'):
     note = sl.text_input('Note (for now)')
     submitted = sl.form_submit_button("Save")
 if submitted:
+
     sl.success('Saved')
