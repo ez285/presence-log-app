@@ -32,7 +32,7 @@ class PresenceLog:
 pl = PresenceLog()
 
 def AddName():
-    selDat = sl.session_state.selDat
+    selDat = sl.session_state.selDat.__str__()
     newComp = sl.session_state.newComp.strip()
     fNam = sl.session_state.fNam.strip()
     lNam = sl.session_state.lNam.strip()
@@ -71,7 +71,7 @@ if sl.session_state.comp == 'Add New...':
             sl.button('End', use_container_width=True, on_click=SendNanes)
         sl.markdown('**** Names added ****')
         if sl.session_state.newNames:
-            sl.text('\n'.join([f'{'\t'.join([itm2.__str__() for itm2 in itm])}' for itm in sl.session_state.newNames]))
+            sl.text('\n'.join([f'{'\t'.join(itm)}' for itm in sl.session_state.newNames]))
         else:
             sl.text('No names')
 else:
