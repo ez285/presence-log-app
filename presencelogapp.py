@@ -52,13 +52,13 @@ if sl.session_state.comp == 'Add New...':
         sl.session_state.addPersonellUI = False
     if 'newNames' not in sl.session_state:
         sl.session_state.newNames = []
-    left, right = sl.columns([4, 1])
+    left, right = sl.columns([4, 1], vertical_alignment='bottom')
     with left:
         sl.text_input(label='Company name', key='newComp')
     with right:
         sl.button(label='Add personell', use_container_width=True, on_click=lambda:sl.session_state.update(addPersonellUI=True))
     if sl.session_state.addPersonellUI:
-        left, middle, rightAdd, rightEnd = sl.columns([4, 4, 1, 1])
+        left, middle, rightAdd, rightEnd = sl.columns([4, 4, 1, 1], vertical_alignment='bottom')
         with left:
             sl.text_input(label='First Name', key='fNam')
         with middle:
