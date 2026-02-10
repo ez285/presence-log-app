@@ -32,8 +32,8 @@ class PresenceLog:
 pl = PresenceLog()
 
 sl.date_input('Date', value=date.today(), format='DD/MM/YYYY', key='selDat')
-sl.selectbox('Company', pl.Companies + ['Add New...'], key='cont')
-if sl.session_state.cont == 'Add New...':
+sl.selectbox('Company', pl.Companies + ['Add New...'], key='comp')
+if sl.session_state.comp == 'Add New...':
     if 'newNames' not in sl.session_state:
         sl.session_state.newNames = []
 
@@ -54,7 +54,7 @@ if sl.session_state.cont == 'Add New...':
             sl.text('No names')
 
     def AddName():
-        cont = sl.session_state.cont.strip()
+        cont = sl.session_state.newComp.strip()
         fNam = sl.session_state.fNam.strip()
         lNam = sl.session_state.lNam.strip()
         if cont is None and fNam is None and lNam is None:
@@ -69,13 +69,13 @@ if sl.session_state.cont == 'Add New...':
         
     left, right = sl.columns([4, 1])
     with left:
-        sl.text_input(label='Company name', key='cont')
+        sl.text_input(label='Company name', key='newComp')
     with right:
         addPers = sl.button(label='Add personell', use_container_width=True, on_click=AddPeople)
 
 
-elif sl.session_state.cont is not None:
-    selPres = sl.multiselect('Presence', pl.GetPersonellForCompany(str(sl.session_state.cont)) + ['Add New...'])
+elif sl.session_state.comp is not None:
+    selPres = sl.multiselect('Presence', pl.GetPersonellForCompany(str(sl.session_state.comp)) + ['Add New...'])
 
 #submitted = sl.button("Save")
 
