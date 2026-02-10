@@ -57,8 +57,6 @@ if sl.session_state.comp == 'Add New...':
         cont = sl.session_state.newComp.strip()
         fNam = sl.session_state.fNam.strip()
         lNam = sl.session_state.lNam.strip()
-        if cont is None and fNam is None and lNam is None:
-            return
         sl.session_state.newNames.append([cont, fNam, lNam])
         sl.session_state.cont = ''
         sl.session_state.fNam = ''
@@ -71,13 +69,4 @@ if sl.session_state.comp == 'Add New...':
     with left:
         sl.text_input(label='Company name', key='newComp')
     with right:
-        addPers = sl.button(label='Add personell', use_container_width=True, on_click=AddPeople)
-
-
-elif sl.session_state.comp is not None:
-    selPres = sl.multiselect('Presence', pl.GetPersonellForCompany(str(sl.session_state.comp)) + ['Add New...'])
-
-#submitted = sl.button("Save")
-
-#if submitted:
-    #sl.success('Saved')
+        sl.button(label='Add personell', use_container_width=True, on_click=AddPeople)
