@@ -32,10 +32,11 @@ class PresenceLog:
 pl = PresenceLog()
 
 def AddName():
+    selDat = sl.session_state.selDat
     newComp = sl.session_state.newComp.strip()
     fNam = sl.session_state.fNam.strip()
     lNam = sl.session_state.lNam.strip()
-    toAppend = [newComp, fNam, lNam]
+    toAppend = [selDat, newComp, None, fNam, lNam]
     flag = any([itm is not None and itm != '' for itm in toAppend])
     if flag:
         sl.session_state.newNames.append(toAppend)
@@ -43,7 +44,8 @@ def AddName():
     sl.session_state.lNam = ''
 
 def SendNanes():
-    pass
+    pl.AddRows(sl.session_state.newNames)
+    sl.session_state.newNames = []
 
 sl.date_input('Date', value=date.today(), format='DD/MM/YYYY', key='selDat')
 sl.selectbox('Company', pl.Companies + ['Add New...'], key='comp')
@@ -69,11 +71,11 @@ if sl.session_state.comp == 'Add New...':
             sl.button('End', use_container_width=True, on_click=SendNanes)
         sl.markdown('**** Names added ****')
         if sl.session_state.newNames:
-            sl.text('\n'.join([f'{itm[0]}\t{itm[1]}\t{itm[2]}' for itm in sl.session_state.newNames]))
+            sl.text('\n'.join([f'{'\t'.join(itm)}' for itm in sl.session_state.newNames]))
         else:
             sl.text('No names')
 else:
     if 'addPersonellUI' in sl.session_state:
-        sl.session_state.pop('addPersonellUI')
+        sl.session_state.addPersonellUI = False
     if 'newNames' in sl.session_state:
-        sl.session_state.pop('newNames')
+        sl.session_state.newNames = []
