@@ -36,7 +36,7 @@ def AddName():
     newComp = sl.session_state.newComp.strip()
     fNam = sl.session_state.fNam.strip()
     lNam = sl.session_state.lNam.strip()
-    toAppend = [selDat, newComp, None, fNam, lNam]
+    toAppend = [selDat, newComp, '', fNam, lNam]
     flag = any([itm is not None and itm != '' for itm in toAppend])
     if flag:
         sl.session_state.newNames.append(toAppend)
@@ -79,3 +79,4 @@ else:
         sl.session_state.addPersonellUI = False
     if 'newNames' in sl.session_state:
         sl.session_state.newNames = []
+
