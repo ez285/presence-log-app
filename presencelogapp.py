@@ -34,11 +34,48 @@ pl = PresenceLog()
 selDat = sl.date_input('Date', value=date.today(), format='DD/MM/YYYY')
 cont = sl.selectbox('Company', pl.Companies + ['Add New...'])
 if cont == 'Add New...':
-    cont = sl.text_input('Company name:')
+    if 'newNames' not in sl.session_state:
+        sl.session_state.newNames = []
+    def AddName():
+        cont = sl.session_state.cont.strip()
+        fNam = sl.session_state.fNam.strip()
+        lNam = sl.session_state.lNam.strip()
+        if cont is None and fNam is None and lNam is None:
+            return
+        sl.session_state.newNames.append([cont, fNam, lNam])
+        sl.session_state.cont = ''
+        sl.session_state.fNam = ''
+        sl.session_state.lNam = ''
+
+    def SendNanes():
+        pass
+        
+    left, right = sl.columns([4, 1])
+    with left:
+        sl.text_input(label='Company name', label_visibility='collapsed', key='cont')
+    with right:
+        addPers = sl.button('Add personell')
+    if addPers:
+        left, middle, rightAdd, rightEnd = sl.columns([4, 4, 1, 1])
+        with left:
+            sl.text_input(label='First Name', label_visibility='collapsed', key='fNam')
+        with middle:
+            sl.text_input(label='Last Name', label_visibility='collapsed', key='lNam')
+        with rightAdd:
+            sl.button('Add', use_container_width=True, on_click=AddName)
+        with rightEnd:
+            sl.button('End', use_container_width=True, on_click=SendNanes)
+        sl.markdown('**** Names added ****')
+        if sl.session_state.names:
+            sl.text('\n'.join([f'{itm[0]}. {itm[1]} {itm[2]}' for itm in sl.session_state.names]))
+        else:
+            sl.text('No names')
+
+
 elif cont is not None:
     selPres = sl.multiselect('Presence', pl.GetPersonellForCompany(str(cont)) + ['Add New...'])
 
-submitted = sl.button("Save")
+#submitted = sl.button("Save")
 
-if submitted:
-    sl.success('Saved')
+#if submitted:
+    #sl.success('Saved')
