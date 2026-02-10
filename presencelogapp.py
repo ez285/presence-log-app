@@ -39,7 +39,6 @@ def AddName():
     flag = any([itm is not None and itm != '' for itm in toAppend])
     if flag:
         sl.session_state.newNames.append(toAppend)
-    sl.session_state.newComp = ''
     sl.session_state.fNam = ''
     sl.session_state.lNam = ''
 
@@ -70,6 +69,11 @@ if sl.session_state.comp == 'Add New...':
             sl.button('End', use_container_width=True, on_click=SendNanes)
         sl.markdown('**** Names added ****')
         if sl.session_state.newNames:
-            sl.text('\n'.join([f'{itm[0]}. {itm[1]} {itm[2]}' for itm in sl.session_state.newNames]))
+            sl.text('\n'.join([f'{itm[0]}\t{itm[1]}\t{itm[2]}' for itm in sl.session_state.newNames]))
         else:
             sl.text('No names')
+else:
+    if 'addPersonellUI' in sl.session_state:
+        sl.session_state.pop('addPersonellUI')
+    if 'newNames' in sl.session_state:
+        sl.session_state.pop('newNames')
