@@ -34,7 +34,7 @@ pl = PresenceLog()
 selDat = sl.date_input('Date', value=date.today(), format='DD/MM/YYYY')
 cont = sl.selectbox('Company', pl.Companies + ['Add New...'])
 if cont == 'Add New...':
-    pass
+    cont = sl.text_input('Company name:')
 elif cont is not None:
     selPres = sl.multiselect('Presence', pl.GetPersonellForCompany(str(cont)) + ['Add New...'])
 
@@ -42,4 +42,3 @@ submitted = sl.button("Save")
 
 if submitted:
     sl.success('Saved')
-
