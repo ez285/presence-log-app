@@ -71,7 +71,7 @@ if sl.session_state.comp == 'Add New...':
             sl.button('End', use_container_width=True, on_click=SendNanes)
         sl.markdown('**** Names added ****')
         if sl.session_state.newNames:
-            sl.text('\n'.join([f'{'\t'.join(itm)}' for itm in sl.session_state.newNames]))
+            sl.text('\n'.join([f'{'\t'.join([itm2.__str__() for itm2 in itm])}' for itm in sl.session_state.newNames]))
         else:
             sl.text('No names')
 else:
