@@ -31,13 +31,34 @@ class PresenceLog:
 
 pl = PresenceLog()
 
+def AddName():
+    newComp = sl.session_state.newComp.strip()
+    fNam = sl.session_state.fNam.strip()
+    lNam = sl.session_state.lNam.strip()
+    toAppend = [newComp, fNam, lNam]
+    flag = any([itm is not None and itm != '' for itm in toAppend])
+    if flag:
+        sl.session_state.newNames.append(toAppend)
+    sl.session_state.newComp = ''
+    sl.session_state.fNam = ''
+    sl.session_state.lNam = ''
+
+def SendNanes():
+    pass
+
 sl.date_input('Date', value=date.today(), format='DD/MM/YYYY', key='selDat')
 sl.selectbox('Company', pl.Companies + ['Add New...'], key='comp')
 if sl.session_state.comp == 'Add New...':
+    if 'addPersonellUI' not in sl.session_state:
+        sl.session_state.addPersonellUI = False
     if 'newNames' not in sl.session_state:
         sl.session_state.newNames = []
-
-    def AddPeople():
+    left, right = sl.columns([4, 1])
+    with left:
+        sl.text_input(label='Company name', key='newComp')
+    with right:
+        sl.button(label='Add personell', use_container_width=True, on_click=lambda:sl.session_state.update(addPersonellUI=True))
+    if sl.session_state.addPersonellUI:
         left, middle, rightAdd, rightEnd = sl.columns([4, 4, 1, 1])
         with left:
             sl.text_input(label='First Name', key='fNam')
@@ -52,21 +73,3 @@ if sl.session_state.comp == 'Add New...':
             sl.text('\n'.join([f'{itm[0]}. {itm[1]} {itm[2]}' for itm in sl.session_state.newNames]))
         else:
             sl.text('No names')
-
-    def AddName():
-        cont = sl.session_state.newComp.strip()
-        fNam = sl.session_state.fNam.strip()
-        lNam = sl.session_state.lNam.strip()
-        sl.session_state.newNames.append([cont, fNam, lNam])
-        sl.session_state.cont = ''
-        sl.session_state.fNam = ''
-        sl.session_state.lNam = ''
-
-    def SendNanes():
-        pass
-        
-    left, right = sl.columns([4, 1])
-    with left:
-        sl.text_input(label='Company name', key='newComp')
-    with right:
-        sl.button(label='Add personell', use_container_width=True, on_click=AddPeople)
