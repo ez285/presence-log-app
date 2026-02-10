@@ -36,6 +36,23 @@ cont = sl.selectbox('Company', pl.Companies + ['Add New...'])
 if cont == 'Add New...':
     if 'newNames' not in sl.session_state:
         sl.session_state.newNames = []
+
+    def AddPeople():
+        left, middle, rightAdd, rightEnd = sl.columns([4, 4, 1, 1])
+        with left:
+            sl.text_input(label='First Name', key='fNam')
+        with middle:
+            sl.text_input(label='Last Name', key='lNam')
+        with rightAdd:
+            sl.button('Add', use_container_width=True, on_click=AddName)
+        with rightEnd:
+            sl.button('End', use_container_width=True, on_click=SendNanes)
+        sl.markdown('**** Names added ****')
+        if sl.session_state.newNames:
+            sl.text('\n'.join([f'{itm[0]}. {itm[1]} {itm[2]}' for itm in sl.session_state.newNames]))
+        else:
+            sl.text('No names')
+
     def AddName():
         cont = sl.session_state.cont.strip()
         fNam = sl.session_state.fNam.strip()
@@ -52,24 +69,9 @@ if cont == 'Add New...':
         
     left, right = sl.columns([4, 1])
     with left:
-        sl.text_input(label='Company name', label_visibility='collapsed', key='cont')
+        sl.text_input(label='Company name', key='cont')
     with right:
-        addPers = sl.button('Add personell')
-    if addPers:
-        left, middle, rightAdd, rightEnd = sl.columns([4, 4, 1, 1])
-        with left:
-            sl.text_input(label='First Name', label_visibility='collapsed', key='fNam')
-        with middle:
-            sl.text_input(label='Last Name', label_visibility='collapsed', key='lNam')
-        with rightAdd:
-            sl.button('Add', use_container_width=True, on_click=AddName)
-        with rightEnd:
-            sl.button('End', use_container_width=True, on_click=SendNanes)
-        sl.markdown('**** Names added ****')
-        if sl.session_state.newNames:
-            sl.text('\n'.join([f'{itm[0]}. {itm[1]} {itm[2]}' for itm in sl.session_state.newNames]))
-        else:
-            sl.text('No names')
+        addPers = sl.button(label='Add personell', use_container_width=True, on_click=AddPeople)
 
 
 elif cont is not None:
@@ -79,4 +81,3 @@ elif cont is not None:
 
 #if submitted:
     #sl.success('Saved')
-
