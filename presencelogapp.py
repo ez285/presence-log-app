@@ -31,9 +31,9 @@ class PresenceLog:
 
 pl = PresenceLog()
 
-selDat = sl.date_input('Date', value=date.today(), format='DD/MM/YYYY')
-cont = sl.selectbox('Company', pl.Companies + ['Add New...'])
-if cont == 'Add New...':
+sl.date_input('Date', value=date.today(), format='DD/MM/YYYY', key='selDat')
+sl.selectbox('Company', pl.Companies + ['Add New...'], key='cont')
+if sl.session_state.cont == 'Add New...':
     if 'newNames' not in sl.session_state:
         sl.session_state.newNames = []
 
@@ -74,8 +74,8 @@ if cont == 'Add New...':
         addPers = sl.button(label='Add personell', use_container_width=True, on_click=AddPeople)
 
 
-elif cont is not None:
-    selPres = sl.multiselect('Presence', pl.GetPersonellForCompany(str(cont)) + ['Add New...'])
+elif sl.session_state.cont is not None:
+    selPres = sl.multiselect('Presence', pl.GetPersonellForCompany(str(sl.session_state.cont)) + ['Add New...'])
 
 #submitted = sl.button("Save")
 
