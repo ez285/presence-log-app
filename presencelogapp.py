@@ -66,7 +66,7 @@ if cont == 'Add New...':
         with rightEnd:
             sl.button('End', use_container_width=True, on_click=SendNanes)
         sl.markdown('**** Names added ****')
-        if sl.session_state.names:
+        if sl.session_state.newNames:
             sl.text('\n'.join([f'{itm[0]}. {itm[1]} {itm[2]}' for itm in sl.session_state.newNames]))
         else:
             sl.text('No names')
@@ -79,3 +79,4 @@ elif cont is not None:
 
 #if submitted:
     #sl.success('Saved')
+
