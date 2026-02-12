@@ -28,7 +28,6 @@ class PresenceLog:
     def GetPersonellForCompany(self, company:str) -> list:
         return [[rec['Local ID'], rec['First Name'], rec['Last Name']] for rec in self.PersonellList if rec['Contractor'] == company]
 
-
 pl = PresenceLog()
 
 def AddName():
@@ -37,15 +36,33 @@ def AddName():
     fNam = sl.session_state.fNam.strip()
     lNam = sl.session_state.lNam.strip()
     toAppend = [selDat, newComp, '', fNam, lNam]
-    flag = any([itm is not None and itm != '' for itm in toAppend])
+    flag = any([itm is not None and itm != '' for itm in [fNam, lNam]])
     if flag:
         sl.session_state.newNames.append(toAppend)
     sl.session_state.fNam = ''
     sl.session_state.lNam = ''
 
 def SendNanes():
+    AddName()
     pl.AddRows(sl.session_state.newNames)
     sl.session_state.newNames = []
+
+def AddNameKnown():
+    selDat = sl.session_state.selDat.__str__()
+    comp = sl.session_state.comp.strip()
+    fNam = sl.session_state.fNam.strip()
+    lNam = sl.session_state.lNam.strip()
+    toAppend = [selDat, comp, '', fNam, lNam]
+    flag = any([itm is not None and itm != '' for itm in [fNam, lNam]])
+    if flag:
+        sl.session_state.newNamesKnown.append(toAppend)
+    sl.session_state.fNam = ''
+    sl.session_state.lNam = ''
+
+def SendNanesKnown():
+    AddNameKnown()
+    pl.AddRows(sl.session_state.newNamesKnown)
+    sl.session_state.newNamesKnown = []
 
 sl.date_input('Date', value=date.today(), format='DD/MM/YYYY', key='selDat')
 sl.selectbox('Company', pl.Companies + ['Add New...'], key='comp')
@@ -74,9 +91,23 @@ if sl.session_state.comp == 'Add New...':
             sl.text('\n'.join([f'{'\t'.join(itm)}' for itm in sl.session_state.newNames]))
         else:
             sl.text('No names')
-else:
-    if 'addPersonellUI' in sl.session_state:
-        sl.session_state.addPersonellUI = False
-    if 'newNames' in sl.session_state:
-        sl.session_state.newNames = []
-
+elif sl.session_state.comp:
+    people = pl.GetPersonellForCompany(sl.session_state.comp)
+    selected = []
+    for i, person in enumerate(people):
+        sl.checkbox(f'{'\t'.join(person)}', key=f'person_{i}')
+        if sl.session_state[f'person_{i}']:
+            selected.append(i)
+    sl.checkbox('Add New...', key='person_custom')
+    if sl.session_state.person_custom:
+        if 'newNamesKnown' not in sl.session_state:
+            sl.session_state.newNamesKnown = []
+        left, middle, rightAdd, rightEnd = sl.columns([4, 4, 1, 1], vertical_alignment='bottom')
+        with left:
+            sl.text_input(label='First Name', key='fNam')
+        with middle:
+            sl.text_input(label='Last Name', key='lNam')
+        with rightAdd:
+            sl.button('Add', use_container_width=True, on_click=AddNameKnown)
+        with rightEnd:
+            sl.button('End', use_container_width=True, on_click=SendNanesKnown)
