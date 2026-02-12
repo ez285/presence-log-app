@@ -95,7 +95,7 @@ elif sl.session_state.comp:
     people = pl.GetPersonellForCompany(sl.session_state.comp)
     selected = []
     for i, person in enumerate(people):
-        sl.checkbox(f'{'\t'.join(person)}', key=f'person_{i}')
+        sl.checkbox(f'{'\t'.join([itm.__str__() for itm in person])}', key=f'person_{i}')
         if sl.session_state[f'person_{i}']:
             selected.append(i)
     sl.checkbox('Add New...', key='person_custom')
