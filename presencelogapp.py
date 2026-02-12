@@ -42,8 +42,7 @@ def AddName():
     sl.session_state.fNam = ''
     sl.session_state.lNam = ''
 
-def SendNanes():
-    AddName()
+def Submit():
     pl.AddRows(sl.session_state.newNames)
     sl.session_state.newNames = []
 
@@ -59,9 +58,8 @@ def AddNameKnown():
     sl.session_state.fNam = ''
     sl.session_state.lNam = ''
 
-def SendNanesKnown():
-    AddNameKnown()
-    pl.AddRows(sl.session_state.newNamesKnown)
+def SubmitKnown(selected):
+    pl.AddRows(selected + sl.session_state.newNamesKnown)
     sl.session_state.newNamesKnown = []
 
 sl.date_input('Date', value=date.today(), format='DD/MM/YYYY', key='selDat')
@@ -77,20 +75,19 @@ if sl.session_state.comp == 'Add New...':
     with right:
         sl.button(label='Add personell', use_container_width=True, on_click=lambda:sl.session_state.update(addPersonellUI=True))
     if sl.session_state.addPersonellUI:
-        left, middle, rightAdd, rightEnd = sl.columns([4, 4, 1, 1], vertical_alignment='bottom')
+        left, middle, right = sl.columns([4, 4, 1], vertical_alignment='bottom')
         with left:
             sl.text_input(label='First Name', key='fNam')
         with middle:
             sl.text_input(label='Last Name', key='lNam')
-        with rightAdd:
+        with right:
             sl.button('Add', use_container_width=True, on_click=AddName)
-        with rightEnd:
-            sl.button('End', use_container_width=True, on_click=SendNanes)
         sl.markdown('**** Names added ****')
         if sl.session_state.newNames:
             sl.text('\n'.join([f'{'\t'.join(itm)}' for itm in sl.session_state.newNames]))
         else:
             sl.text('No names')
+    sl.button('Submit', use_container_width=True, on_click=Submit)
 elif sl.session_state.comp:
     people = pl.GetPersonellForCompany(sl.session_state.comp)
     selected = []
@@ -102,12 +99,16 @@ elif sl.session_state.comp:
     if sl.session_state.person_custom:
         if 'newNamesKnown' not in sl.session_state:
             sl.session_state.newNamesKnown = []
-        left, middle, rightAdd, rightEnd = sl.columns([4, 4, 1, 1], vertical_alignment='bottom')
+        left, middle, right = sl.columns([4, 4, 1], vertical_alignment='bottom')
         with left:
             sl.text_input(label='First Name', key='fNam')
         with middle:
             sl.text_input(label='Last Name', key='lNam')
-        with rightAdd:
+        with right:
             sl.button('Add', use_container_width=True, on_click=AddNameKnown)
-        with rightEnd:
-            sl.button('End', use_container_width=True, on_click=SendNanesKnown)
+        sl.markdown('**** Names added ****')
+        if sl.session_state.newNamesKnown:
+            sl.text('\n'.join([f'{'\t'.join(itm)}' for itm in sl.session_state.newNamesKnown]))
+        else:
+            sl.text('No names')
+    sl.button('Submit', use_container_width=True, on_click=lambda selected=selected: SubmitKnown(selected))
