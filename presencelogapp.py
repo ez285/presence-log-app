@@ -96,7 +96,7 @@ elif sl.session_state.comp:
     selected = []
     for i, person in enumerate(people):
         if sl.checkbox('\t'.join([itm.__str__() for itm in person])):
-            selected.append([sl.session_state.selDat, sl.session_state.comp] + person)
+            selected.append([sl.session_state.selDat.__str__(), sl.session_state.comp] + person)
     sl.checkbox('Add New...', key='person_custom')
     if sl.session_state.person_custom:
         if 'newNamesKnown' not in sl.session_state:
