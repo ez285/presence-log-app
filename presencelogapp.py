@@ -59,7 +59,10 @@ def AddNameKnown():
     sl.session_state.lNam = ''
 
 def SubmitKnown(selected):
-    pl.AddRows(selected + sl.session_state.newNamesKnown)
+    if 'newNamesKnown' in sl.session_state:
+        pl.AddRows(selected + sl.session_state.newNamesKnown)
+    else:
+        pl.AddRows(selected)
     sl.session_state.newNamesKnown = []
 
 sl.date_input('Date', value=date.today(), format='DD/MM/YYYY', key='selDat')
