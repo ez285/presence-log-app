@@ -49,8 +49,8 @@ def Submit():
 def AddNameKnown():
     selDat = sl.session_state.selDat.__str__()
     comp = sl.session_state.comp.strip()
-    fNam = sl.session_state.fNam.strip()
-    lNam = sl.session_state.lNam.strip()
+    fNam = sl.session_state.fNamK.strip()
+    lNam = sl.session_state.lNamK.strip()
     toAppend = [selDat, comp, '', fNam, lNam]
     flag = any([itm is not None and itm != '' for itm in [fNam, lNam]])
     if flag:
@@ -87,7 +87,7 @@ if sl.session_state.comp == 'Add New...':
             sl.button('Add', use_container_width=True, on_click=AddName)
         sl.markdown('**** Names added ****')
         if sl.session_state.newNames:
-            sl.text('\n'.join([f'{'\t'.join(itm)}' for itm in sl.session_state.newNames]))
+            sl.text('\n'.join(['\t'.join(itm) for itm in sl.session_state.newNames]))
         else:
             sl.text('No names')
     sl.button('Submit', use_container_width=True, on_click=Submit)
@@ -95,18 +95,17 @@ elif sl.session_state.comp:
     people = pl.GetPersonellForCompany(sl.session_state.comp)
     selected = []
     for i, person in enumerate(people):
-        sl.checkbox(f'{'\t'.join([itm.__str__() for itm in person])}', key=f'person_{i}')
-        if sl.session_state[f'person_{i}']:
-            selected.append(i)
+        if sl.checkbox('\t'.join([itm.__str__() for itm in person])):
+            selected.append([sl.session_state.selDat, sl.session_state.comp] + person)
     sl.checkbox('Add New...', key='person_custom')
     if sl.session_state.person_custom:
         if 'newNamesKnown' not in sl.session_state:
             sl.session_state.newNamesKnown = []
         left, middle, right = sl.columns([4, 4, 1], vertical_alignment='bottom')
         with left:
-            sl.text_input(label='First Name', key='fNam')
+            sl.text_input(label='First Name', key='fNamK')
         with middle:
-            sl.text_input(label='Last Name', key='lNam')
+            sl.text_input(label='Last Name', key='lNamK')
         with right:
             sl.button('Add', use_container_width=True, on_click=AddNameKnown)
         sl.markdown('**** Names added ****')
