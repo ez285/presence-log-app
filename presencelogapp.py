@@ -58,14 +58,14 @@ def AddNameKnown():
     sl.session_state.fNamK = ''
     sl.session_state.lNamK = ''
 
-def SubmitKnown(selected, checkboxesKeys):
+def SubmitKnown(selected):
     if 'newNamesKnown' in sl.session_state:
         pl.AddRows(selected + sl.session_state.newNamesKnown)
     else:
         pl.AddRows(selected)
     sl.session_state.newNamesKnown = []
-    for checkboxKey in checkboxesKeys:
-        sl.session_state.update(checkboxKey=False)
+    for person in selected:
+        sl.session_state[f'cb_{person[1]}_{person[2]}'] = False
 
 sl.date_input('Date', value=date.today(), format='DD/MM/YYYY', key='selDat')
 sl.selectbox('Company', pl.Companies + ['Add New...'], key='comp')
@@ -96,14 +96,9 @@ if sl.session_state.comp == 'Add New...':
 elif sl.session_state.comp:
     people = pl.GetPersonellForCompany(sl.session_state.comp)
     selected = []
-    checkboxesKeys = []
-    if 'checkboxID' not in sl.session_state:
-        sl.session_state.checkboxID = 0
     for person in people:
-        sl.session_state.checkboxID += 1
-        sl.checkbox('\t'.join([itm.__str__() for itm in person]), key=f'checkbox_{sl.session_state.checkboxID}')
-        checkboxesKeys.append(f'checkbox_{sl.session_state.checkboxID}')
-        if sl.session_state.get(f'checkbox_{sl.session_state.checkboxID}'):
+        sl.checkbox('\t'.join([itm.__str__() for itm in person]), key=f'cb_{sl.session_state.comp}_{person[0]}')
+        if sl.session_state.get(f'cb_{sl.session_state.comp}_{person[0]}'):
             selected.append([sl.session_state.selDat.__str__(), sl.session_state.comp] + person)
     sl.checkbox('Add New...', key='person_custom')
     if sl.session_state.person_custom:
@@ -118,7 +113,7 @@ elif sl.session_state.comp:
             sl.button('Add', use_container_width=True, on_click=AddNameKnown)
         sl.markdown('**** Names added ****')
         if sl.session_state.newNamesKnown:
-            sl.text('\n'.join([f'{'\t'.join(itm)}' for itm in sl.session_state.newNamesKnown]))
+            sl.text('\n'.join(['\t'.join(itm) for itm in sl.session_state.newNamesKnown]))
         else:
             sl.text('No names')
-    sl.button('Submit', use_container_width=True, on_click=lambda selected=selected, checkboxesKeys=checkboxesKeys: SubmitKnown(selected, checkboxesKeys))
+    sl.button('Submit', use_container_width=True, on_click=lambda selected=selected: SubmitKnown(selected))
