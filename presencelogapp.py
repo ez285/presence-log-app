@@ -55,8 +55,8 @@ def AddNameKnown():
     flag = any([itm is not None and itm != '' for itm in [fNam, lNam]])
     if flag:
         sl.session_state.newNamesKnown.append(toAppend)
-    sl.session_state.fNam = ''
-    sl.session_state.lNam = ''
+    sl.session_state.fNamK = ''
+    sl.session_state.lNamK = ''
 
 def SubmitKnown(selected):
     if 'newNamesKnown' in sl.session_state:
