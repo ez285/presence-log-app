@@ -74,7 +74,7 @@ if 'showAllView' not in sl.session_state:
 
 if sl.session_state.showAllView:
     sl.markdown(f'**** Attendance on {sl.session_state.selDat.strftime('%d/%m/%Y')} ****')
-    sl.text('\n'.join(['\t'.join(itm) for itm in pl.GetPersonellForDate(sl.session_state.selDat)]))
+    sl.text('\n'.join(['\t'.join([itm2.__str__() for itm2 in itm]) for itm in pl.GetPersonellForDate(sl.session_state.selDat)]))
     sl.button('Back', use_container_width=True, on_click=lambda:sl.session_state.update(showAllView=False))
 else:
     left, right = sl.columns([4,1], vertical_alignment='bottom')
