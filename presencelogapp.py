@@ -77,7 +77,7 @@ if sl.session_state.showAllView:
     sl.text('\n'.join(['\t'.join([itm2.__str__() for itm2 in itm]) for itm in pl.GetPersonellForDate(sl.session_state.selDat)]))
     sl.button('Back', use_container_width=True, on_click=lambda:sl.session_state.update(showAllView=False))
 else:
-    left, right = sl.columns([3,1], vertical_alignment='bottom')
+    left, right = sl.columns([3, 1], vertical_alignment='bottom')
     with left:
         sl.date_input('Date', value=date.today(), format='DD/MM/YYYY', key='selDat')
     with right:
@@ -131,4 +131,3 @@ else:
             else:
                 sl.text('No names')
         sl.button('Submit', use_container_width=True, on_click=lambda selected=selected: SubmitKnown(selected))
-
