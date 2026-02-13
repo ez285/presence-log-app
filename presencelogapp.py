@@ -27,11 +27,14 @@ class PresenceLog:
     
     def GetPersonellForCompany(self, company:str) -> list:
         return [[rec['Local ID'], rec['First Name'], rec['Last Name']] for rec in self.PersonellList if rec['Contractor'] == company]
+    
+    def GetPersonellForDate(self, dat:date) -> list:
+        return [list(rec.values()) for rec in self.SheetDaily.get_all_records() if rec['Date'] == dat.strftime('%d/%m/%Y')]
 
 pl = PresenceLog()
 
 def AddName():
-    selDat = sl.session_state.selDat.__str__()
+    selDat = sl.session_state.selDat.strftime('%d/%m/%Y')
     newComp = sl.session_state.newComp.strip()
     fNam = sl.session_state.fNam.strip()
     lNam = sl.session_state.lNam.strip()
@@ -47,7 +50,7 @@ def Submit():
     sl.session_state.newNames = []
 
 def AddNameKnown():
-    selDat = sl.session_state.selDat.__str__()
+    selDat = sl.session_state.selDat.strftime('%d/%m/%Y')
     comp = sl.session_state.comp.strip()
     fNam = sl.session_state.fNamK.strip()
     lNam = sl.session_state.lNamK.strip()
@@ -66,54 +69,65 @@ def SubmitKnown(selected):
     sl.session_state.newNamesKnown = []
     for person in selected:
         sl.session_state[f'cb_{person[1]}_{person[2]}'] = False
+if 'showAllView' not in sl.session_state:
+    sl.session_state.showAllView = False
 
-sl.date_input('Date', value=date.today(), format='DD/MM/YYYY', key='selDat')
-sl.selectbox('Company', pl.Companies + ['Add New...'], key='comp')
-if sl.session_state.comp == 'Add New...':
-    if 'addPersonellUI' not in sl.session_state:
-        sl.session_state.addPersonellUI = False
-    if 'newNames' not in sl.session_state:
-        sl.session_state.newNames = []
-    left, right = sl.columns([4, 1], vertical_alignment='bottom')
+if sl.session_state.showAllView:
+    sl.markdown(f'**** Attendance on {sl.session_state.selDat} ****')
+    sl.text('\n'.join(['\t'.join(itm) for itm in pl.GetPersonellForDate(sl.session_state.selDat)]))
+    sl.button('Back', use_container_width=True, on_click=lambda:sl.session_state.update(showAllView=False))
+else:
+    left, right = sl.columns([4,1], vertical_alignment='bottom')
     with left:
-        sl.text_input(label='Company name', key='newComp')
+        sl.date_input('Date', value=date.today(), format='DD/MM/YYYY', key='selDat')
     with right:
-        sl.button(label='Add personell', use_container_width=True, on_click=lambda:sl.session_state.update(addPersonellUI=True))
-    if sl.session_state.addPersonellUI:
-        left, middle, right = sl.columns([4, 4, 1], vertical_alignment='bottom')
+        sl.button('Show all records', use_container_width=True, on_click=lambda:sl.session_state.update(showAllView=True))
+    sl.selectbox('Company', pl.Companies + ['Add New...'], key='comp')
+    if sl.session_state.comp == 'Add New...':
+        if 'addPersonellUI' not in sl.session_state:
+            sl.session_state.addPersonellUI = False
+        if 'newNames' not in sl.session_state:
+            sl.session_state.newNames = []
+        left, right = sl.columns([4, 1], vertical_alignment='bottom')
         with left:
-            sl.text_input(label='First Name', key='fNam')
-        with middle:
-            sl.text_input(label='Last Name', key='lNam')
+            sl.text_input(label='Company name', key='newComp')
         with right:
-            sl.button('Add', use_container_width=True, on_click=AddName)
-        sl.markdown('**** Names added ****')
-        if sl.session_state.newNames:
-            sl.text('\n'.join(['\t'.join(itm) for itm in sl.session_state.newNames]))
-        else:
-            sl.text('No names')
-    sl.button('Submit', use_container_width=True, on_click=Submit)
-elif sl.session_state.comp:
-    people = pl.GetPersonellForCompany(sl.session_state.comp)
-    selected = []
-    for person in people:
-        sl.checkbox('\t'.join([itm.__str__() for itm in person]), key=f'cb_{sl.session_state.comp}_{person[0]}')
-        if sl.session_state.get(f'cb_{sl.session_state.comp}_{person[0]}'):
-            selected.append([sl.session_state.selDat.__str__(), sl.session_state.comp] + person)
-    sl.checkbox('Add New...', key='person_custom')
-    if sl.session_state.person_custom:
-        if 'newNamesKnown' not in sl.session_state:
-            sl.session_state.newNamesKnown = []
-        left, middle, right = sl.columns([4, 4, 1], vertical_alignment='bottom')
-        with left:
-            sl.text_input(label='First Name', key='fNamK')
-        with middle:
-            sl.text_input(label='Last Name', key='lNamK')
-        with right:
-            sl.button('Add', use_container_width=True, on_click=AddNameKnown)
-        sl.markdown('**** Names added ****')
-        if sl.session_state.newNamesKnown:
-            sl.text('\n'.join(['\t'.join(itm) for itm in sl.session_state.newNamesKnown]))
-        else:
-            sl.text('No names')
-    sl.button('Submit', use_container_width=True, on_click=lambda selected=selected: SubmitKnown(selected))
+            sl.button(label='Add personell', use_container_width=True, on_click=lambda:sl.session_state.update(addPersonellUI=True))
+        if sl.session_state.addPersonellUI:
+            left, middle, right = sl.columns([4, 4, 1], vertical_alignment='bottom')
+            with left:
+                sl.text_input(label='First Name', key='fNam')
+            with middle:
+                sl.text_input(label='Last Name', key='lNam')
+            with right:
+                sl.button('Add', use_container_width=True, on_click=AddName)
+            sl.markdown('**** Names added ****')
+            if sl.session_state.newNames:
+                sl.text('\n'.join(['\t'.join(itm) for itm in sl.session_state.newNames]))
+            else:
+                sl.text('No names')
+        sl.button('Submit', use_container_width=True, on_click=Submit)
+    elif sl.session_state.comp:
+        people = pl.GetPersonellForCompany(sl.session_state.comp)
+        selected = []
+        for person in people:
+            sl.checkbox('\t'.join([itm.__str__() for itm in person]), key=f'cb_{sl.session_state.comp}_{person[0]}')
+            if sl.session_state.get(f'cb_{sl.session_state.comp}_{person[0]}'):
+                selected.append([sl.session_state.selDat.__str__(), sl.session_state.comp] + person)
+        sl.checkbox('Add New...', key='person_custom')
+        if sl.session_state.person_custom:
+            if 'newNamesKnown' not in sl.session_state:
+                sl.session_state.newNamesKnown = []
+            left, middle, right = sl.columns([4, 4, 1], vertical_alignment='bottom')
+            with left:
+                sl.text_input(label='First Name', key='fNamK')
+            with middle:
+                sl.text_input(label='Last Name', key='lNamK')
+            with right:
+                sl.button('Add', use_container_width=True, on_click=AddNameKnown)
+            sl.markdown('**** Names added ****')
+            if sl.session_state.newNamesKnown:
+                sl.text('\n'.join(['\t'.join(itm) for itm in sl.session_state.newNamesKnown]))
+            else:
+                sl.text('No names')
+        sl.button('Submit', use_container_width=True, on_click=lambda selected=selected: SubmitKnown(selected))
